@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { supabase } from "./supabaseClient"; // Import Supabase client
 import axios from "axios"; // Import axios for API calls
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ const Signup = () => {
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate= useNavigate()
 
   // Handle the signup form submission
   const handleSignup = async (e) => {
@@ -42,10 +44,16 @@ const Signup = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-sm p-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Signup</h2>
-        
-        {error && <div className="bg-red-500 text-white text-center py-2 rounded mb-4">{error}</div>}
-        
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          Signup
+        </h2>
+
+        {error && (
+          <div className="bg-red-500 text-white text-center py-2 rounded mb-4">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSignup} className="space-y-4">
           <div>
             <input
@@ -102,7 +110,9 @@ const Signup = () => {
 
         <p className="mt-4 text-center text-gray-600">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-600 hover:text-blue-700">Login</a>
+          <p className="text-blue-600 hover:text-blue-700" onClick={navigate("/login")}>
+            Login
+          </p>
         </p>
       </div>
     </div>

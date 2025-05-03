@@ -1,6 +1,8 @@
 import React, { useState,useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { supabase } from "./pages/supabaseClient";
+import { Provider } from "react-redux";
+import store from "./store/store"; // Import the store
 
 // Import your pages
 import Signin from "./pages/SignInSupa";
@@ -21,6 +23,7 @@ const App = () => {
  
 
   return (
+    <Provider store={store}>
     <Router>
       <div>
         <Routes>
@@ -44,6 +47,7 @@ const App = () => {
         )}
       </div>
     </Router>
+    </Provider>
   );
 };
 

@@ -1,8 +1,8 @@
 import axiosInstance from "../axiosInstance";
-import axios from "axios"
+import axios from "axios";
 
 import { supabase } from "../pages/supabaseClient"; // Import Supabase client
-const API_BASE_URL = "http://localhost:3001/api"; // Replace with your backend's URL
+const API_URL = "http://localhost:3001/api"; // Replace with your backend's URL
 
 /**
  * Fetches all expenses for a specific user.
@@ -10,11 +10,15 @@ const API_BASE_URL = "http://localhost:3001/api"; // Replace with your backend's
  * @returns {Promise<Array>} - The list of expenses.
  */
 export const fetchExpenses = async (userId) => {
+  console.log("Fetching expenses for user:", userId); // Log userId
   try {
-    const response = await axios.get(`${API_BASE_URL}/expenses`, {
-      params: { userId },
-    });
-    return response.data;
+    const response = await axios.get(`http://localhost:3001/api/view-expenses`,{
+      params: { user_id: userId },
+    }
+    
+    );
+    console.log("API Response:", response.data); // Log API response
+    return response.data.success; // Ensure you're accessing the correct field
   } catch (error) {
     console.error("Error fetching expenses:", error);
     throw error;
@@ -29,7 +33,10 @@ export const fetchExpenses = async (userId) => {
 export const addExpense = async (expenseData) => {
   try {
     // Get the authenticated user
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
     if (error) {
       throw new Error("User not authenticated");
@@ -43,13 +50,13 @@ export const addExpense = async (expenseData) => {
     const expenseWithUser = { ...expenseData, user_id: user.id };
 
     // Now make the API call to your backend or Supabase to add the expense
-    const response = await supabase.from('expenses').insert([expenseWithUser]);
+    const response = await supabase.from("expenses").insert([expenseWithUser]);
 
     if (response.error) {
       throw response.error;
     }
 
-    return response.data;  // Return the added expense data
+    return response.data; // Return the added expense data
   } catch (error) {
     console.error("Error adding expense:", error.message);
     throw error;
@@ -64,7 +71,7 @@ export const addExpense = async (expenseData) => {
 export const updateExpense = async (expenseId, updates) => {
   try {
     const response = await axios.put(
-      `${API_BASE_URL}/expenses/${expenseId}`,
+      `${API_URL}/expenses/${expenseId}`,
       updates
     );
     return response.data;
@@ -81,7 +88,7 @@ export const updateExpense = async (expenseId, updates) => {
  */
 export const deleteExpense = async (expenseId) => {
   try {
-    await axios.delete(`${API_BASE_URL}/expenses/${expenseId}`);
+    await axios.delete(`${API_URL}/expenses/${expenseId}`);
   } catch (error) {
     console.error("Error deleting expense:", error);
     throw error;
