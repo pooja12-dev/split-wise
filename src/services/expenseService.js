@@ -12,10 +12,11 @@ const API_URL = "http://localhost:3001/api"; // Replace with your backend's URL
 export const fetchExpenses = async (userId) => {
   console.log("Fetching expenses for user:", userId); // Log userId
   try {
-    const response = await axios.get(`http://localhost:3001/api/view-expenses`,{
-      params: { user_id: userId },
-    }
-    
+    const response = await axios.get(
+      `http://localhost:3001/api/view-expenses`,
+      {
+        params: { user_id: userId },
+      }
     );
     console.log("API Response:", response.data); // Log API response
     return response.data.success; // Ensure you're accessing the correct field
@@ -30,26 +31,19 @@ export const fetchExpenses = async (userId) => {
  * @param {Object} expense - The expense object to be added.
  * @returns {Promise<Object>} - The newly created expense.
  */
-export const addExpense = async (expenseData) => {
+// services/expenseService.js
+export const addExpense = async (expenseData, userId) => {
   try {
-    // Get the authenticated user
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    if (error) {
+    if (!userId) {
       throw new Error("User not authenticated");
     }
 
-    if (!user) {
-      throw new Error("User not authenticated");
-    }
+    // Log the payload for debugging
+    console.log("Expense data:", expenseData);
 
-    // Add the user ID to expense data
-    const expenseWithUser = { ...expenseData, user_id: user.id };
+    const expenseWithUser = { ...expenseData, user_id: userId };
 
-    // Now make the API call to your backend or Supabase to add the expense
+    // Insert into Supabase
     const response = await supabase.from("expenses").insert([expenseWithUser]);
 
     if (response.error) {
@@ -62,6 +56,8 @@ export const addExpense = async (expenseData) => {
     throw error;
   }
 };
+
+
 /**
  * Updates an existing expense.
  * @param {number} expenseId - The ID of the expense to update.

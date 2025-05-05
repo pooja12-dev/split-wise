@@ -1,35 +1,25 @@
-import React from 'react';
+import React from "react";
 
 export default function ExpenseList({ expenses }) {
   return (
-    <ul className="divide-y divide-gray-200">
-      {expenses.map((expense) => (
-        <li key={expense.id} className="p-4 hover:bg-gray-50">
-          <div className="flex items-center">
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
-                {expense.title}
-              </p>
-              <p className="text-xs text-gray-500">
-                {new Date(expense.date).toLocaleDateString()} • {expense.category}
-              </p>
-              <p className="text-xs text-gray-500">
-                {expense.paidBy === 'You' ? 'You paid' : `${expense.paidBy} paid`} $
-                {expense.amount.toFixed(2)}
-              </p>
-            </div>
-            <div className="flex-shrink-0 ml-4">
-              <span
-                className={`text-sm font-medium ${
-                  expense.paidBy === 'You' ? 'text-green-600' : 'text-red-600'
-                }`}
-              >
-                {expense.paidBy === 'You' ? '+' : '-'}${expense.yourShare.toFixed(2)}
-              </span>
-            </div>
-          </div>
-        </li>
-      ))}
-    </ul>
+    <div className="overflow-x-auto">
+      <table className="min-w-full table-auto border-collapse border border-gray-300">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="border border-gray-300 px-4 py-2 text-left">ID</th>
+            <th className="border border-gray-300 px-4 py-2 text-left">Expense</th>
+          </tr>
+        </thead>
+        <tbody>
+          {expenses.map((expense) => (
+            <tr key={expense.id} className="hover:bg-gray-100">
+             
+              <td className="border border-gray-300 px-4 py-2">{expense.expenses}</td>
+              <td className="border border-gray-300 px-4 py-2">{expense.amount}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

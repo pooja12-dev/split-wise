@@ -15,7 +15,8 @@ import Expenses from './pages/Expenses';
 import Accounts from './pages/Accounts';
 import NewExpenseModal from './ui/NewExpenseModal';
 import ExpensesPage from "./pages/Expenses";
-
+import Groups from "./pages/Groups";
+import GroupDetails from "./components/GroupDetails";
 
 
 const App = () => {
@@ -37,7 +38,8 @@ const App = () => {
             <Route path="activity" element={<Activity />} />
             <Route path="expenses" element={<ExpensesPage onNewExpense={() => setShowNewExpenseModal(true)} />} />
             <Route path="accounts" element={<Accounts />} />
-            <Route path="groups" element={<Accounts />} />
+            <Route path="groups" element={<Groups />} />
+            <Route path="groups/:id" element={<GroupDetails />} />
           </Route>
         </Routes>
 
