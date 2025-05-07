@@ -1,4 +1,3 @@
-// frontend/src/components/Signup.js
 import React, { useState } from "react";
 import { supabase } from "./supabaseClient"; // Import Supabase client
 import axios from "axios"; // Import axios for API calls
@@ -11,13 +10,21 @@ const Signup = () => {
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate= useNavigate()
+  const navigate = useNavigate();
 
   // Handle the signup form submission
   const handleSignup = async (e) => {
     e.preventDefault();
 
     try {
+      setLoading(true); // Start loading
+      console.log("Attempting signup with:", {
+        firstName,
+        lastName,
+        email,
+        password,
+      });
+
       const response = await axios.post(
         "http://localhost:3001/api/user-signup",
         {
@@ -28,16 +35,32 @@ const Signup = () => {
         }
       );
 
+      console.log("API Response:", response);
+
       if (response.status === 200) {
         // Handle successful signup
-        console.log("Signup successful", response.data);
+        console.log("Signup successful:", response.data);
+        setLoading(false);
+        navigate("/login"); // Navigate to the login page after successful signup
       }
     } catch (error) {
-      console.error(
-        "Error during signup:",
-        error.response ? error.response.data : error.message
-      );
-      setError("An error occurred during signup. Please try again.");
+      setLoading(false);
+
+      // Check if error.response exists and is properly formatted
+      if (error.response) {
+        const errorMessage =
+          error.response.data.error ||
+          error.response.data.message ||
+          "An error occurred during signup.";
+        console.error("Error Response Data:", error.response.data);
+        setError(errorMessage); // Set the dynamic error message
+      } else {
+        // Generic network or other unexpected error
+        console.error("Unexpected Error:", error.message);
+        setError(
+          "An unexpected error occurred. Please check your connection and try again."
+        );
+      }
     }
   };
 
@@ -48,8 +71,9 @@ const Signup = () => {
           Signup
         </h2>
 
+        {/* Display error message */}
         {error && (
-          <div className="bg-red-500 text-white text-center py-2 rounded mb-4">
+          <div className="bg-red-500 text-white text-center py-3 rounded mb-4">
             {error}
           </div>
         )}
@@ -110,9 +134,12 @@ const Signup = () => {
 
         <p className="mt-4 text-center text-gray-600">
           Already have an account?{" "}
-          <p className="text-blue-600 hover:text-blue-700" onClick={navigate("/login")}>
+          <span
+            className="text-blue-600 hover:text-blue-700 cursor-pointer"
+            onClick={() => navigate("/login")}
+          >
             Login
-          </p>
+          </span>
         </p>
       </div>
     </div>

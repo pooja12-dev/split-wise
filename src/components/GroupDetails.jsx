@@ -1,37 +1,52 @@
-import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import axios from "axios";
+import { useEffect } from "react";
 
 const GroupDetails = () => {
-  const { id } = useParams(); // Get the group ID from URL
-  const [group, setGroup] = useState(null);
-  console.log(id);
+  const { id } = useParams(); // Group ID from URL
+  const user = useSelector((state) => state.user.user); // Logged-in user from Redux
+
+  console.log("GroupDetails Rendered");
+  console.log("Group ID from useParams:", id);
+  console.log("User from Redux:", user);
+
   useEffect(() => {
-    const fetchGroupDetails = async () => {
+    if (!id || !user?.id) {
+      console.warn("Missing group ID or user ID");
+      return;
+    }
+
+    console.log("Preparing request with:");
+    console.log("group_id:", id);
+    console.log("user:", user.id);
+
+    const fetchGroup = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3001/api/view-group/${id}`
+          "http://localhost:3001/api/view-group",
+          {
+            params: {
+              group_id: id,
+              user: user.id,
+            },
+          }
         );
-        console.log(response);
-        setGroup(response.data.success[0]);
-      } catch (error) {
-        console.error("Error fetching group details:", error);
+
+        console.log(
+          "Axios GET URL:",
+          `http://localhost:3001/api/view-group?group_id=${id}&user=${user.id}`
+        );
+        console.log("Group data:", response.data);
+      } catch (err) {
+        console.error("API error:", err.response?.data || err.message);
       }
     };
 
-    fetchGroupDetails();
-  }, [id]);
+    fetchGroup();
+  }, [id, user]);
 
-  if (!group) return <div>Loading...</div>;
-
-  return (
-    <div>
-      <h2>{group.name}</h2>
-      {/* Render the rest of the group details */}
-      <p>Type: {group.type}</p>
-      {/* Add more group details as needed */}
-    </div>
-  );
+  return null; // Add actual UI later
 };
 
 export default GroupDetails;

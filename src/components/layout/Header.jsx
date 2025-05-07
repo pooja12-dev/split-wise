@@ -1,6 +1,14 @@
-import { Search, ChevronDown } from 'lucide-react';
+import { useSelector } from "react-redux";
+import { Search, ChevronDown } from "lucide-react";
+import { selectUser } from "../../slice/userSlice"; // adjust the import path
+import { Link } from "react-router-dom";
 
 export default function Header() {
+  const user = useSelector(selectUser);
+
+  const email = user?.email || "";
+  const profileLetter = email ? email.charAt(0).toUpperCase() : "?";
+
   return (
     <header className="bg-white border-b h-16 flex items-center justify-between px-4">
       <div className="flex items-center">
@@ -15,15 +23,17 @@ export default function Header() {
           />
         </div>
       </div>
-      
+
       <div className="flex items-center">
-        <button className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-purple-700 rounded-full flex items-center justify-center text-white">
-            P
-          </div>
-          <span className="text-sm font-medium">Pooja Harplani</span>
-          <ChevronDown size={16} className="text-gray-500" />
-        </button>
+        <Link to="./profile">
+          <button className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-purple-700 rounded-full flex items-center justify-center text-white font-semibold">
+              {profileLetter}
+            </div>
+            <span className="text-sm font-medium">{email}</span>
+            <ChevronDown size={16} className="text-gray-500" />
+          </button>
+        </Link>
       </div>
     </header>
   );

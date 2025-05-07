@@ -1,22 +1,25 @@
-import axiosInstance from '../axiosInstance'; // Import your Axios instance
-import { setUser } from '../slice/userSlice'; // Import setUser action
-import { useDispatch } from 'react-redux'; // Import useDispatch hook
+import axiosInstance from "../axiosInstance"; // Import your Axios instance
+import { setUser } from "../slice/userSlice"; // Import setUser action
+import { useDispatch } from "react-redux"; // Import useDispatch hook
 
 // Helper function to save user in the `users` table
 const saveUserToDatabase = async (user) => {
   try {
     // Make a request to save the user in the `users` table
-    await axiosInstance.post('/users', { user }); // Adjust endpoint based on backend API
-    console.log('User saved to database:', user);
+    await axiosInstance.post("/users", { user }); // Adjust endpoint based on backend API
+    console.log("User saved to database:", user);
   } catch (error) {
-    console.error('Error saving user to database:', error.response?.data || error.message);
+    console.error(
+      "Error saving user to database:",
+      error.response?.data || error.message
+    );
   }
 };
 
 // Function to handle user signup
 export const signup = async (userData) => {
   try {
-    const response = await axiosInstance.post('/auth/signup', userData);
+    const response = await axiosInstance.post("/auth/signup", userData);
     const user = response.data.user; // Get the user data from the backend response
 
     // Save the user to the database
@@ -24,7 +27,7 @@ export const signup = async (userData) => {
 
     return response.data; // Return the response from the backend
   } catch (error) {
-    console.error('Signup error:', error.response?.data || error.message);
+    console.error("Signup error:", error.response?.data || error.message);
     throw error; // Re-throw error for the calling function to handle
   }
 };
@@ -32,13 +35,15 @@ export const signup = async (userData) => {
 // Function to handle user login
 export const login = async (credentials, dispatch) => {
   try {
-    const response = await axiosInstance.post('/auth/signin', credentials);
+    const response = await axiosInstance.post("/auth/signin", credentials, {
+      withCredentials: true,
+    });
     const { token, user } = response.data; // Adjust based on backend response
     console.log(user, "user from authService");
     console.log(token, "token from authService");
 
     // Store token in localStorage
-    localStorage.setItem('authToken', token);
+    localStorage.setItem("authToken", token);
 
     // Dispatch the user data to Redux store
     dispatch(setUser(user));
@@ -48,7 +53,31 @@ export const login = async (credentials, dispatch) => {
 
     return user;
   } catch (error) {
-    console.error('Login error:', error.response?.data || error.message);
+    console.error("Login error:", error.response?.data || error.message);
     throw error;
+  }
+};
+
+// Fetch user from localStorage
+export const fetchUserFromLocalStorage = () => {
+  const user = localStorage.getItem("user");
+  return user ? JSON.parse(user) : null;
+};
+
+// // Logout function
+// export const logout = (dispatch) => {
+//   localStorage.removeItem('authToken');
+//   localStorage.removeItem('user');
+//   dispatch(clearUser()); // Action to clear user data in Redux
+// };
+export const getUserFromToken = async (decodedToken) => {
+  try {
+    const response = await axiosInstance.get(`/users/${decodedToken.id}`, {
+      withCredentials: true,
+    });
+    return response.data; // Assuming response contains the user data
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    throw new Error("Could not fetch user data.");
   }
 };

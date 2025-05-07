@@ -44,7 +44,7 @@ export const addExpense = async (expenseData, userId) => {
     const expenseWithUser = { ...expenseData, user_id: userId };
 
     // Insert into Supabase
-    const response = await supabase.from("expenses").insert([expenseWithUser]);
+    const response = await supabase.from("expense").insert([expenseWithUser]);
 
     if (response.error) {
       throw response.error;
@@ -56,7 +56,6 @@ export const addExpense = async (expenseData, userId) => {
     throw error;
   }
 };
-
 
 /**
  * Updates an existing expense.

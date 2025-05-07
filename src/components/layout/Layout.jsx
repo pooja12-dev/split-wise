@@ -1,66 +1,98 @@
-import { Outlet } from 'react-router-dom';
-import { useState, createContext } from 'react';
-import { Menu } from 'lucide-react';
-import Sidebar from './SideBar';
-import Header from './Header';
+import { Outlet } from "react-router-dom";
+import { useState, createContext, useEffect } from "react";
+import { Menu, ChevronLeft, ChevronRight } from "lucide-react";
+import Sidebar from "./SideBar";
+import Header from "./Header";
 
 // Create context for sidebar state
 export const SidebarContext = createContext();
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Handle responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+
+      // Auto-collapse sidebar on smaller screens
+      if (width < 1024) {
+        setSidebarOpen(false);
+      } else {
+        setSidebarOpen(true);
+      }
+    };
+
+    // Set initial state
+    handleResize();
+
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+
+    // Clean up
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <SidebarContext.Provider value={{ sidebarOpen, setSidebarOpen }}>
-      <div className="flex h-screen bg-gray-50">
-        {/* Mobile sidebar */}
-        <div className={`fixed inset-0 z-40 flex md:hidden ${sidebarOpen ? 'visible' : 'invisible'}`}>
-          {/* Overlay */}
-          <div 
-            className={`fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity ${
-              sidebarOpen ? 'opacity-100' : 'opacity-0'
-            }`}
+      <div className="flex h-screen overflow-hidden">
+        {/* Mobile sidebar overlay */}
+        {isMobile && sidebarOpen && (
+          <div
+            className="fixed inset-0 z-50 bg-opacity-75"
             onClick={() => setSidebarOpen(false)}
           />
-          
-          {/* Sidebar */}
-          <div className={`relative flex-1 flex flex-col max-w-xs w-full bg-white transition-transform ${
-            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}>
-            <Sidebar />
-          </div>
-        </div>
+        )}
 
-        {/* Desktop sidebar */}
-        <div className={`hidden md:flex md:flex-shrink-0 transition-all duration-300 ${
-          sidebarOpen ? 'w-64' : 'w-0'
-        }`}>
-          <div className="flex flex-col w-64">
+        {/* Sidebar - Fixed positioning for mobile, relative for larger screens */}
+        <aside
+          className={`
+            ${isMobile ? "fixed" : "relative"} 
+            z-40 h-full
+            ${
+              isMobile
+                ? sidebarOpen
+                  ? "left-0"
+                  : "-left-full"
+                : sidebarOpen
+                ? "w-52 lg:w-56"
+                : "w-auto"
+            }
+            transition-all duration-300 ease-in-out
+          `}
+        >
+          <div className="h-full bg-white border-r shadow-sm overflow-hidden">
             <Sidebar />
-          </div>
-        </div>
 
-        {/* Main content */}
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <div className="relative z-10">
-            <Header />
+            {/* Toggle button for desktop - OUTSIDE the sidebar container */}
           </div>
-          
-          <main className="flex-1 relative overflow-y-auto focus:outline-none">
-            <div className="py-6">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                {/* Mobile menu button */}
+        </aside>
+
+        {/* Main content - Flex-grow to take remaining space */}
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          {/* Header */}
+          <header className="bg-white shadow-sm z-30">
+            <div className="px-4 flex items-center justify-between h-16">
+              {/* Mobile menu button */}
+              {isMobile && (
                 <button
-                  type="button"
-                  className="md:hidden inline-flex items-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4"
                   onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="text-gray-500 focus:outline-none"
                 >
                   <Menu size={24} />
                 </button>
+              )}
 
-                {/* Render the child components here using Outlet */}
-                <Outlet />
-              </div>
+              <Header />
+            </div>
+          </header>
+
+          {/* Page content */}
+          <main className="flex-1 overflow-y-auto bg-gray-50">
+            <div className="py-6 px-4 sm:px-6 lg:px-8">
+              <Outlet />
             </div>
           </main>
         </div>

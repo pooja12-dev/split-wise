@@ -30,20 +30,42 @@ export const fetchGroups = async (userId) => {
 
 //fetching all groups
 
-export const viewGroup = async (id, userId) => {
-  try {
-    const response = await axios.get(
-      `http://localhost:3001/api/view-group/${id}`,
-      {
-        params: { user: userId },
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { useEffect } from "react";
+
+const GroupDetails = () => {
+  const { id } = useParams(); // This is the group ID from the URL
+  const user = useSelector((state) => state.user.user); // Logged-in user from Redux
+
+  console.log(id, user);
+  useEffect(() => {
+    if (!id || !user?.id) {
+      console.warn("Missing group ID or user ID");
+      return;
+    }
+
+    (async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3001/api/view-group",
+          {
+            params: {
+              group_id:id,
+              user: user.id, // User ID
+            },
+          }
+        );
+
+        console.log("Group data:", response.data);
+      } catch (err) {
+        console.error("API error:", err.response?.data || err.message);
       }
-    );
-    return response.data.success;
-  } catch (error) {
-    throw new Error(
-      error.response?.data?.error || "An unexpected error occurred."
-    );
-  }
+    })();
+  }, [id, user]);
 };
+export default GroupDetails;
+
 
 //fetching group based onuser id

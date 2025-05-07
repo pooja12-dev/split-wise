@@ -4,7 +4,7 @@ import ExpensesHeader from "../components/ExpensesHeader";
 import ExpenseFilters from "../components/ExpensesFilters";
 import ExpenseList from "../components/ExpensesList";
 import { fetchExpenses, addExpense } from "../services/expenseService";
-import NewExpenseModal from "../ui/NewExpenseModal"
+import NewExpenseModal from "../ui/NewExpenseModal";
 
 export default function ExpensesPage() {
   const [showModal, setShowModal] = useState(false); // Modal state
@@ -17,7 +17,7 @@ export default function ExpensesPage() {
 
   // Access user from Redux store
   const user = useSelector((state) => state.user.user); // Get user from the Redux store
-  console.log(user)
+  console.log(user);
 
   useEffect(() => {
     const loadExpenses = async () => {
@@ -42,7 +42,7 @@ export default function ExpensesPage() {
   const handleAddExpense = async () => {
     setShowModal(true); 
     const expenseData = {
-      name: expenseName.trim(),
+      expenses: expenseName.trim(),
       amount: parseFloat(expenseAmount), // Convert to a number
       type: expenseType.trim(),
       description: expenseDescription.trim(),
@@ -55,18 +55,30 @@ export default function ExpensesPage() {
     }
   
     try {
-      await addExpense(expenseData, user?.id);
+      // Add the expense to the backend
+      const response = await addExpense(expenseData, user?.id);
+  
+      // Assuming `response` contains the new expense
+      const newExpense = response.expense;
+  
+      // Update the state to include the new expense
+      setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
+  
       console.log("Expense added successfully");
+  
+      // Optionally, reset the input fields
+      setExpenseName("");
+      setExpenseAmount("");
+      setExpenseType("");
+      setExpenseDescription("");
     } catch (error) {
       console.error("Failed to add expense:", error.message);
     }
   };
-
+  
   const closeModal = () => {
     setShowModal(false); // Close modal
   };
-
-  
 
   return (
     <div>

@@ -1,17 +1,48 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Home, Activity, FileText, CreditCard, Users, PlusCircle, Heart, Lightbulb, Settings } from 'lucide-react';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Home,
+  Activity,
+  FileText,
+  CreditCard,
+  Users,
+  PlusCircle,
+  Heart,
+  Lightbulb,
+  Settings,
+} from "lucide-react";
 
 export default function Sidebar() {
-  const [activeItem, setActiveItem] = useState('home');
+  const [activeItem, setActiveItem] = useState("home");
   const navigate = useNavigate();
 
   const menuItems = [
-    { id: 'home', name: 'Home', icon: Home, route: '/dashboard/home' },
-    { id: 'activity', name: 'Activity', icon: Activity, route: '/dashboard/activity' },
-    { id: 'expenses', name: 'Expenses', icon: FileText, route: '/dashboard/expenses' },
-    { id: 'accounts', name: 'Accounts', icon: CreditCard, route: '/dashboard/accounts' },
-    { id: 'groups', name: 'Groups', icon: CreditCard, route: '/dashboard/groups' },
+    { id: "home", name: "Home", icon: Home, route: "/dashboard/home" },
+    {
+      id: "activity",
+      name: "Activity",
+      icon: Activity,
+      route: "/dashboard/activity",
+    },
+    {
+      id: "expenses",
+      name: "Expenses",
+      icon: FileText,
+      route: "/dashboard/expenses",
+    },
+    {
+      id: "accounts",
+      name: "Accounts",
+      icon: CreditCard,
+      route: "/dashboard/accounts",
+    },
+    {
+      id: "groups",
+      name: "Groups",
+      icon: CreditCard,
+      route: "/dashboard/groups",
+    },
+    { id: "tags", name: "tags", icon: Home, route: "/dashboard/tags" },
   ];
 
   const handleMenuItemClick = (item) => {
@@ -27,7 +58,7 @@ export default function Sidebar() {
         </div>
         <h1 className="text-lg font-semibold">SplitMyExpenses</h1>
       </div>
-      
+
       <nav className="flex-1">
         <ul className="py-2">
           {menuItems.map((item) => {
@@ -37,7 +68,9 @@ export default function Sidebar() {
                 <button
                   onClick={() => handleMenuItemClick(item)} // Handle navigation
                   className={`w-full flex items-center space-x-3 px-4 py-3 text-left ${
-                    activeItem === item.id ? 'text-purple-600 bg-purple-50' : 'text-gray-700 hover:bg-gray-100'
+                    activeItem === item.id
+                      ? "text-purple-600 bg-purple-50"
+                      : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
                   <Icon size={20} />
@@ -50,19 +83,24 @@ export default function Sidebar() {
       </nav>
 
       <div className="px-4 py-2">
-        <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Your groups</h3>
+        <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+          Your groups
+        </h3>
         <button className="w-full text-left py-2 px-4 rounded-md bg-purple-50 text-purple-600 mb-4">
           <span className="flex items-center">
             <PlusCircle size={16} className="mr-2" />
             New group
           </span>
         </button>
+
+        <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+          Your friends
+        </h3>
         
-        <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Your friends</h3>
         <button className="w-full text-left py-2 px-4 rounded-md bg-purple-50 text-purple-600 mb-4">
           <span className="flex items-center">
             <Users size={16} className="mr-2" />
-            Add friend
+            Tags
           </span>
         </button>
       </div>
